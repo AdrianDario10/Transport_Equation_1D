@@ -1,4 +1,4 @@
-# Transport_Equation_1D
+# Transport Equation 1D
 
 Physics informed neural network (PINN) for the 1D Transport equation
 
