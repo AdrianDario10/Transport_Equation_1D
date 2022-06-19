@@ -9,84 +9,27 @@ from lib.network import Network
 from lib.optimizer import L_BFGS_B
 from numpy import linalg as LA
 
-def u0(tx, c=1, k=2, sd=0.5):
+def u0(tx):
     """
     Initial wave form.
     Args:
         tx: variables (t, x) as tf.Tensor.
-        c: wave velocity.
-        k: wave number.
-        sd: standard deviation.
     Returns:
         u(t, x) as tf.Tensor.
     """
 
     t = tx[..., 0, None]
     x = tx[..., 1, None]
-    #z = k*x - (c*k)*t
 
 
-    return   1/(1+x**2) #tf.sin(z) * tf.exp(-(0.5*z/sd)**2)  #x*x*x-x   #tf.cos(2*x+t)  
 
-#def du0_dt(tx):
-#    """
-#    First derivative of t for the initial wave form.
-#    Args:
-#        tx: variables (t, x) as tf.Tensor.
-#    Returns:
-#        du(t, x)/dt as tf.Tensor.
-#    """
-#
-#    with tf.GradientTape() as g:
-#        g.watch(tx)
-#        u = u0(tx)
-#    du_dt = g.batch_jacobian(u, tx)[..., 0]
-#    return du_dt
+    return   1/(1+x**2) 
 
 if __name__ == '__main__':
     """
     Test the physics informed neural network (PINN) model for the wave equation.
     """
-    import numpy as np
-
-
-    def primes_from_2_to(n):
-      sieve = np.ones(n // 3 + (n % 6 == 2), dtype=np.bool)
-      for i in range(1, int(n ** 0.5) // 3 + 1):
-        if sieve[i]:
-            k = 3 * i + 1 | 1
-            sieve[k * k // 3::2 * k] = False
-            sieve[k * (k - 2 * (i & 1) + 4) // 3::2 * k] = False
-      return np.r_[2, 3, ((3 * np.nonzero(sieve)[0][1:] + 1) | 1)]
-
-
-    def van_der_corput(n_sample, base=2):
-      sequence = []
-      for i in range(n_sample):
-        n_th_number, denom = 0., 1.
-        while i > 0:
-            i, remainder = divmod(i, base)
-            denom *= base
-            n_th_number += remainder / denom
-        sequence.append(n_th_number)
-
-      return sequence
-
-
-    def halton(dim, n_sample):
-      big_number = 10
-      while 'Not enought primes':
-        base = primes_from_2_to(big_number)[:dim]
-        if len(base) == dim:
-            break
-        big_number += 1000
-
-    # Generate a sample using a Van der Corput sequence per dimension.
-      sample = [van_der_corput(n_sample + 1, dim) for dim in base]
-      sample = np.stack(sample, axis=-1)[1:]
-
-      return sample
-
+    
     # number of training samples
     num_train_samples = 10000
     # number of test samples
@@ -102,18 +45,6 @@ if __name__ == '__main__':
     t=3
     x_f=3
     x_ini=-3
-    num = np.sqrt(num_train_samples)
-    num = int(np.round(num,0))
-
-    epsilon=1e-4
-    x_=np.linspace(x_ini +epsilon,x_f-epsilon,num)
-    t_=np.linspace(0+epsilon,t-epsilon,num)
-
-    T, X = np.meshgrid(t_,x_)
-
-    #tx_eqn=np.random.rand(num**2, 2)
-    #tx_eqn[...,0]= T.reshape((num**2,))
-    #tx_eqn[...,1]= X.reshape((num**2,))
 
     # create training input
     tx_eqn = np.random.rand(num_train_samples, 2)#halton(2, num_train_samples)#np.random.rand(num_train_samples, 2)
@@ -125,7 +56,7 @@ if __name__ == '__main__':
     # create training output
     u_zero = np.zeros((num_train_samples, 1))
     u_ini = u0(tf.constant(tx_ini)).numpy()
-    ##du_dt_ini = du0_dt(tf.constant(tx_ini)).numpy()
+
 
     # train the model using L-BFGS-B algorithm
     x_train = [tx_eqn, tx_ini]
@@ -147,9 +78,6 @@ if __name__ == '__main__':
     E = (U-u)
     print(np.max(np.max(np.abs(E))))
     
-
-
-
     
     # plot u(t,x) distribution as a color-map
 
