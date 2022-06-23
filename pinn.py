@@ -39,18 +39,12 @@ class PINN:
 
         # compute gradients
         u, du_dt, du_dx, d2u_dt2, d2u_dx2 = self.grads(tx_eqn)
-
-        # compute f(u)
-        #f = self.network(tx_bnd)*self.network(tx_bnd)*self.network(tx_bnd) - self.network(tx_bnd)   
-
         # equation output being zero
         u_eqn = du_dt + self.c * du_dx
+        
         # initial condition output
         u_ini, du_dt_ini, _, _, _ = self.grads(tx_ini)
-        # boundary condition output
-        ###u_bnd = self.network(tx_bnd)  # dirichlet
-        #_, _, u_bnd, _, _ = self.grads(tx_bnd)  # neumann
-
+        
 
         # build the PINN model for the wave equation
         return tf.keras.models.Model(
