@@ -4,9 +4,9 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.gridspec import GridSpec
-import PINN
-import Network
-import L_BFGS_B
+from pinn import PINN
+from network import Network
+from optimizer import L_BFGS_B
 from numpy import linalg as LA
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
