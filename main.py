@@ -1,12 +1,12 @@
-import lib.tf_silent
+import tf_silent
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.gridspec import GridSpec
-from lib.pinn import PINN
-from lib.network import Network
-from lib.optimizer import L_BFGS_B
+import PINN
+import Network
+import L_BFGS_B
 from numpy import linalg as LA
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     # Comparison at time 0, 1 and 2
 
     fig,(ax1, ax2, ax3)  = plt.subplots(1,3,figsize=(15,6))
-    x_flat_ = np.linspace(x_ini+1, x_f-1, 10)
+    x_flat_ = np.linspace(x_ini, x_f, 10)
 
    
     U_1 = 1/(1+(x_flat_)**2)
